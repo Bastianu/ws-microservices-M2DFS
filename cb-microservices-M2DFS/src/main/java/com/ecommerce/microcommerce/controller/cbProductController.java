@@ -18,6 +18,7 @@ public class cbProductController {
     RestTemplate restTemplate;
 
     @RequestMapping(value = "/Produit/{id}", method = RequestMethod.GET)
+   //@HystrixCommand(fallbackMethod = "fallbackMethod")
     public String getProductById(@PathVariable int id)
     {
 
@@ -29,7 +30,52 @@ public class cbProductController {
         return "Product Id -  " + id + " [ Product Details " + response+" ]";
     }
 
+    //@HystrixCommand(fallbackMethod = "fallbackMethod")
+    @RequestMapping(value = "/Produits", method = RequestMethod.GET)
+    public String getProducts()
+    {
+
+        String response = restTemplate.exchange("http://localhost:9090/Produits",
+                HttpMethod.GET, null, new ParameterizedTypeReference<String>() {}).getBody();
+
+        System.out.println("Response Body " + response);
+
+        return "[ Product Details " + response+" ]";
+    }
+
+    //@HystrixCommand(fallbackMethod = "fallbackMethod")
+    @RequestMapping(value = "/ProduitsByName", method = RequestMethod.GET)
+    public String getProductOrderByName()
+    {
+
+        String response = restTemplate.exchange("http://localhost:9090/ProduitsOrderByName",
+                HttpMethod.GET, null, new ParameterizedTypeReference<String>() {}).getBody();
+
+        System.out.println("Response Body " + response);
+
+        return "[ Product Details " + response+" ]";
+    }
+
+
+    @RequestMapping(value = "/AdminProduits", method = RequestMethod.GET)
+    //@HystrixCommand(fallbackMethod = "fallbackMethod")
+    public String getMargeProduits()
+    {
+
+        String response = restTemplate.exchange("http://localhost:9090/AdminProduits",
+                HttpMethod.GET, null, new ParameterizedTypeReference<String>() {}).getBody();
+
+        System.out.println("Response Body " + response);
+
+        return response;
+    }
+
     public String  fallbackMethod(int id){
+
+        return "Fallback response:: No product details available temporarily";
+    }
+
+    public String  fallbackMethod(){
 
         return "Fallback response:: No product details available temporarily";
     }
