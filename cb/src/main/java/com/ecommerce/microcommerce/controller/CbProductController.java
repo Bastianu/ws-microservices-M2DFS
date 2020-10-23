@@ -3,6 +3,7 @@ package com.ecommerce.microcommerce.controller;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -19,7 +20,7 @@ public class CbProductController {
     RestTemplate restTemplate;
 
     @RequestMapping(value = "/Produit/{id}", method = RequestMethod.GET)
-    @HystrixCommand(fallbackMethod = "fallbackMethod")
+    @HystrixCommand(fallbackMethod = "fallbackProduct")
     public String getProductById(@PathVariable int id)
     {
 
@@ -31,8 +32,8 @@ public class CbProductController {
         return "Product Id -  " + id + " [ Product Details " + response+" ]";
     }
 
-    @HystrixCommand(fallbackMethod = "fallbackMethod")
     @RequestMapping(value = "/Produits", method = RequestMethod.GET)
+    @HystrixCommand(fallbackMethod = "fallbackProducts")
     public String getProducts()
     {
 
@@ -44,8 +45,8 @@ public class CbProductController {
         return "[ Product Details " + response+" ]";
     }
 
-    @HystrixCommand(fallbackMethod = "fallbackMethod")
     @RequestMapping(value = "/ProduitsByName", method = RequestMethod.GET)
+    @HystrixCommand(fallbackMethod = "fallbackProducts")
     public String getProductOrderByName()
     {
 
@@ -59,7 +60,7 @@ public class CbProductController {
 
 
     @RequestMapping(value = "/AdminProduits", method = RequestMethod.GET)
-    @HystrixCommand(fallbackMethod = "fallbackMethod")
+    @HystrixCommand(fallbackMethod = "fallbackProducts")
     public String getMargeProduits()
     {
 
@@ -71,18 +72,18 @@ public class CbProductController {
         return response;
     }
 
-    public String  fallbackMethod(int id){
+    public String  fallbackProduct(int id){
 
         return "Fallback response:: No product details available temporarily";
     }
 
-    public String  fallbackMethod(){
+    public String  fallbackProducts(){
 
-        return "Fallback response:: No product details available temporarily";
+        return "Fallback response:: No products details available temporarily";
     }
 
     @Bean
-    //@LoadBalanced
+    @LoadBalanced
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
