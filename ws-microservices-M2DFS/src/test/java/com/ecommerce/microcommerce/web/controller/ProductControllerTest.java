@@ -1,17 +1,27 @@
 package com.ecommerce.microcommerce.web.controller;
 
+import com.ecommerce.microcommerce.dao.ProductDao;
+import com.ecommerce.microcommerce.model.Product;
+import com.ecommerce.microcommerce.web.exceptions.ProduitGratuitException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-//import static org.mockito.Mockito.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.mockito.Mockito.*;
+
 class ProductControllerTest {
     @Mock
-    com.ecommerce.microcommerce.dao.ProductDao productDao;
+    ProductDao productDao;
     @InjectMocks
-    com.ecommerce.microcommerce.web.controller.ProductController productController;
+    ProductController productController;
 
     @BeforeEach
     void setUp() {
@@ -19,55 +29,70 @@ class ProductControllerTest {
     }
 
     @Test
-    void testListeProduits(){
-        org.springframework.http.converter.json.MappingJacksonValue result = productController.listeProduits();
-        Assertions.assertEquals(null, result);
+    void testAfficherUnProduit() {
+        when(productDao.findById(anyInt())).thenReturn(new Product(0, "nom", 0, 0));
+
+        Product result = productController.afficherUnProduit(0);
+        Product p = new Product(0, "nom", 0, 0);
+        Assertions.assertTrue(p.getId() == result.getId());
+        Assertions.assertTrue(p.getNom().equals(p.getNom()));
+        Assertions.assertTrue(p.getPrix() == result.getPrix());
+        Assertions.assertTrue(p.getPrixAchat() == result.getPrixAchat());
     }
 
     @Test
-    void testAfficherUnProduit(){
-        when(productDao.findById(anyInt())).thenReturn(new com.ecommerce.microcommerce.model.Product(0, "nom", 0, 0));
-
-        com.ecommerce.microcommerce.model.Product result = productController.afficherUnProduit(0);
-        Assertions.assertEquals(new com.ecommerce.microcommerce.model.Product(0, "nom", 0, 0), result);
+    void testAjouterProduit() throws ProduitGratuitException {
+        ResponseEntity<Void> result = productController.ajouterProduit(new Product(0, null, 10, 0));
+        Assertions.assertTrue(result.getStatusCodeValue() >= 200);
+        Assertions.assertTrue( result.getStatusCodeValue() < 300);
     }
 
     @Test
-    void testAjouterProduit(){
-        org.springframework.http.ResponseEntity<java.lang.Void> result = productController.ajouterProduit(new com.ecommerce.microcommerce.model.Product(0, null, 0, 0));
-        Assertions.assertEquals(null, result);
+    public void testAjoutMauvaisProduit() throws ProduitGratuitException {
+        Product p = new Product(1,"Ordinateur portable gratuit", 0,120);
+        Assertions.assertThrows(ProduitGratuitException.class, () -> {
+            productController.ajouterProduit(p);
+        });
     }
 
     @Test
-    void testSupprimerProduit(){
+    void testSupprimerProduit() {
         productController.supprimerProduit(0);
     }
 
     @Test
-    void testUpdateProduit(){
-        productController.updateProduit(new com.ecommerce.microcommerce.model.Product(0, null, 0, 0));
+    void testUpdateProduit() throws ProduitGratuitException {
+        productController.updateProduit(new Product(0, null, 10, 0));
     }
 
     @Test
-    void testCalculerMargeProduit(){
-        java.lang.String result = productController.calculerMargeProduit();
-        Assertions.assertEquals("replaceMeWithExpectedResult", result);
+    public void testUpdateMauvaisProduit() throws ProduitGratuitException {
+        Product p = new Product(1,"Ordinateur portable gratuit", 0,120);
+        Assertions.assertThrows(ProduitGratuitException.class, () -> {
+            productController.updateProduit(p);
+        });
     }
 
     @Test
-    void testTrierProduitsParOrdreAlphabetique(){
-        when(productDao.findByOrderByNomAsc()).thenReturn(java.util.Arrays.<com.ecommerce.microcommerce.model.Product>asList(new com.ecommerce.microcommerce.model.Product(0, "nom", 0, 0)));
+    void testTrierProduitsParOrdreAlphabetique() {
+        when(productDao.findByOrderByNomAsc()).
+                thenReturn(Arrays.<Product>asList(
+                        new Product(1, "E", 10, 0),
+                        new Product(2, "Z", 10, 0),
+                        new Product(3, "R", 10, 0)));
 
-        java.util.List<com.ecommerce.microcommerce.model.Product> result = productController.trierProduitsParOrdreAlphabetique();
-        Assertions.assertEquals(java.util.Arrays.<com.ecommerce.microcommerce.model.Product>asList(new com.ecommerce.microcommerce.model.Product(0, "nom", 0, 0)), result);
+        List<Product> result = productController.trierProduitsParOrdreAlphabetique();
+        Assertions.assertEquals(1, result.get(0).getId());
     }
 
     @Test
-    void testTesteDeRequetes(){
-        when(productDao.chercherUnProduitCher(anyInt())).thenReturn(java.util.Arrays.<com.ecommerce.microcommerce.model.Product>asList(new com.ecommerce.microcommerce.model.Product(0, "nom", 0, 0)));
+    void testTesteDeRequetes() throws ProduitGratuitException {
+        when(productDao.chercherUnProduitCher(anyInt())).
+                thenReturn(Arrays.<Product>asList(new Product(0, "nom", 10, 0)));
 
-        java.util.List<com.ecommerce.microcommerce.model.Product> result = productController.testeDeRequetes(0);
-        Assertions.assertEquals(java.util.Arrays.<com.ecommerce.microcommerce.model.Product>asList(new com.ecommerce.microcommerce.model.Product(0, "nom", 0, 0)), result);
+        List<Product> result = productController.testeDeRequetes(9);
+        Assertions.assertEquals(Arrays.<Product>asList(new Product(0, "nom", 10, 0)).get(0).getId(), result.get(0).getId());
+
     }
 }
 
