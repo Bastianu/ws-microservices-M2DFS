@@ -92,9 +92,10 @@ public class ProductController {
         return result;
     }
 
+    @RequestMapping(value = "/ProduitsOrderByName", method = RequestMethod.GET)
     public List<Product> trierProduitsParOrdreAlphabetique(){
 
-        return null;
+        return productDao.findByOrderByNomAsc();
     }
 
 
