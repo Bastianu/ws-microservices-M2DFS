@@ -3,12 +3,14 @@ package com.ecommerce.microcommerce.web.controller;
 import com.ecommerce.microcommerce.dao.ProductDao;
 import com.ecommerce.microcommerce.model.Product;
 import com.ecommerce.microcommerce.web.exceptions.ProduitIntrouvableException;
+import com.ecommerce.microcommerce.web.exceptions.ProduitGratuitException;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +52,11 @@ public class ProductController {
 
     //ajouter un produit
     @PostMapping(value = "/Produits")
-    public ResponseEntity<Void> ajouterProduit(@Valid @RequestBody Product product) {
+    public ResponseEntity<Void> ajouterProduit(@Valid @RequestBody Product product) throws ProduitGratuitException {
+
+        if(product.getPrix() <= 0) {
+            throw new ProduitGratuitException("le prix de vente ne peut pas être égal à 0");
+        }
 
         Product productAdded =  productDao.save(product);
 
@@ -74,10 +80,11 @@ public class ProductController {
 
     // Mettre à jour un produit
     @RequestMapping(value = "/Produits", method = RequestMethod.PUT)
-    public void updateProduit(@RequestBody Product product) {
-        productDao.findById(product.getId()).setPrix(product.getPrix());
-        productDao.findById(product.getId()).setNom(product.getNom());
-        productDao.findById(product.getId()).setPrixAchat(product.getPrixAchat());
+    public void updateProduit(@RequestBody Product product) throws ProduitGratuitException {
+        if(product.getPrix()<=0) {
+            throw new ProduitGratuitException("le prix de vente ne peut pas être égal à 0");
+        }
+        productDao.save(product);
 
     }
 
