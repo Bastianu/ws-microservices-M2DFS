@@ -19,7 +19,7 @@ import java.net.URI;
 import java.util.List;
 
 
-
+@RestController
 public class ProductController {
 
     @Autowired
@@ -39,8 +39,10 @@ public class ProductController {
 
 
     //Récupérer un produit par son Id
-    public Product afficherUnProduit() {
-        return null;
+    @RequestMapping(value = "/Produits/{id}", method = RequestMethod.GET)
+    public Product afficherUnProduit(@PathVariable(value = "id") int id) {
+
+        return productDao.findById(id);
     }
 
 
@@ -65,11 +67,29 @@ public class ProductController {
     }
 
     // supprimer un produit
-    public void supprimerProduit() {
+    @RequestMapping(value = "/Produits/{id}", method = RequestMethod.DELETE)
+    public void supprimerProduit(@PathVariable(value = "id") int id) {
+        productDao.delete(id);
     }
 
     // Mettre à jour un produit
+    @RequestMapping(method = RequestMethod.PUT)
     public void updateProduit(@RequestBody Product product) {
+        productDao.findById(product.getId()).setPrix(product.getPrix());
+        productDao.findById(product.getId()).setNom(product.getNom());
+        productDao.findById(product.getId()).setPrixAchat(product.getPrixAchat());
+
+    }
+
+    @RequestMapping(value = "/AdminProduits", method = RequestMethod.GET)
+    public List<Product> calculerMargeProduit(){
+
+        return productDao.findAll();
+    }
+
+    public List<Product> trierProduitsParOrdreAlphabetique(){
+
+        return null;
     }
 
 
