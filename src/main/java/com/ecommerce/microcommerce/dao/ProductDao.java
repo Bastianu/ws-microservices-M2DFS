@@ -11,7 +11,6 @@ import java.util.List;
 @Repository
 public interface ProductDao extends JpaRepository<Product, Integer> {
 
-    //@Query("SELECT * FROM product p WHERE p.id = :id LIMIT 1")
     Product findById(@Param("id") int id);
 
     //@Query("SELECT * FROM Product p WHERE p.prix > :prixLimit")

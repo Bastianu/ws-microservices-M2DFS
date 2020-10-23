@@ -73,7 +73,7 @@ public class ProductController {
     }
 
     // Mettre à jour un produit
-    @RequestMapping(method = RequestMethod.PUT)
+    @RequestMapping(value = "/Produits", method = RequestMethod.PUT)
     public void updateProduit(@RequestBody Product product) {
         productDao.findById(product.getId()).setPrix(product.getPrix());
         productDao.findById(product.getId()).setNom(product.getNom());
@@ -82,9 +82,14 @@ public class ProductController {
     }
 
     @RequestMapping(value = "/AdminProduits", method = RequestMethod.GET)
-    public List<Product> calculerMargeProduit(){
+    public String calculerMargeProduit(){
 
-        return productDao.findAll();
+        String result = "<br>";
+        List<Product> products = productDao.findAll();
+        for(Product p : products){
+            result += p.toString() +" : "+ (p.getPrix() - p.getPrixAchat()) +" <br> ";
+        }
+        return result;
     }
 
     public List<Product> trierProduitsParOrdreAlphabetique(){
