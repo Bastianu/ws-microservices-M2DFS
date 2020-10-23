@@ -19,7 +19,7 @@ public class CbProductController {
     RestTemplate restTemplate;
 
     @RequestMapping(value = "/Produit/{id}", method = RequestMethod.GET)
-    //@HystrixCommand(fallbackMethod = "fallbackMethod")
+    @HystrixCommand(fallbackMethod = "fallbackMethod")
     public String getProductById(@PathVariable int id)
     {
 
@@ -31,7 +31,7 @@ public class CbProductController {
         return "Product Id -  " + id + " [ Product Details " + response+" ]";
     }
 
-    //@HystrixCommand(fallbackMethod = "fallbackMethod")
+    @HystrixCommand(fallbackMethod = "fallbackMethod")
     @RequestMapping(value = "/Produits", method = RequestMethod.GET)
     public String getProducts()
     {
@@ -59,7 +59,7 @@ public class CbProductController {
 
 
     @RequestMapping(value = "/AdminProduits", method = RequestMethod.GET)
-    //@HystrixCommand(fallbackMethod = "fallbackMethod")
+    @HystrixCommand(fallbackMethod = "fallbackMethod")
     public String getMargeProduits()
     {
 
