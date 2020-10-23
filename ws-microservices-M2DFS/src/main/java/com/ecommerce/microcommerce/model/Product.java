@@ -1,6 +1,7 @@
 package com.ecommerce.microcommerce.model;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Entity;
@@ -14,14 +15,38 @@ public class Product {
 
     @Id
     @GeneratedValue
+    @ApiModelProperty(
+            value = "id produit",
+            name = "id",
+            required = true,
+            dataType = "int",
+            example = "1")
     private int id;
 
+    @ApiModelProperty(
+            value = "nom produit",
+            name = "nom",
+            required = true,
+            dataType = "String",
+            example = "voiture")
     @Length(min=3, max=20, message = "Nom trop long ou trop court. Et oui messages sont plus stylés que ceux de Spring")
     private String nom;
 
+    @ApiModelProperty(
+            value = "prix produit",
+            name = "prix",
+            required = true,
+            dataType = "int",
+            example = "1000")
     @Min(value = 1)
     private int prix;
 
+    @ApiModelProperty(
+            value = "prix achat produit",
+            name = "prixAchat",
+            required = true,
+            dataType = "int",
+            example = "1000")
     //information que nous ne souhaitons pas exposer
     private int prixAchat;
 
