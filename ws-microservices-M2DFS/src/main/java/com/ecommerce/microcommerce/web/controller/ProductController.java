@@ -88,7 +88,7 @@ public class ProductController {
     @ApiOperation(value = "delete produit par son id", response = Iterable.class, tags ="deleteProduct")
     @RequestMapping(value = "/Produit/{id}", method = RequestMethod.DELETE)
     public void supprimerProduit(@PathVariable(value = "id") int id) {
-        productDao.delete(id);
+        productDao.deleteById(id);
     }
 
     // Mettre à jour un produit
